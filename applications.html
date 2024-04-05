@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AJAX Test</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $("#makeRequest").click(function(){
+                $.ajax({
+                    url: 'getMac.php',
+                    type: 'GET',
+					data:"test",
+                    dataType: 'json', 
+                    success: function(response) {
+                        $('#response').empty(); 
+                        $.each(response, function(index, item) {
+                            $('#response').append('<a href="#" class="mac-link" data-pk_id="' + item.pk_id + '">' + item.mac + '</a><br>');
+                        });
+                    }
+                });
+            });
+
+            $('#response').on('click', '.mac-link', function(e) {
+                e.preventDefault();
+
+                var fk_mac = $(this).data('pk_id');
+				var param = "fk_mac="+fk_mac;
+				console.log(param);
+				$.ajax({
+                    url: 'getData.php',
+                    type: 'GET',
+                    data: param,
+                    dataType: 'json', // Specify JSON as the expected data type
+                    success: function(response) {
+						$('#my-data').empty(); 
+                        $.each(response, function(index, item) {
+                            $('#my-data').append('<p class="mac-link" data-pk_id="' + item.pk_id + '">' + item.data + '</p><br>');
+                        });
+                    },
+					  error: function (xhr, ajaxOptions, thrownError) {
+						alert(xhr.status);
+						alert(thrownError);
+					  }
+                });
+				
+                // Do whatever you want with the pk_id value, for example, make another AJAX request.
+            });
+        });
+    </script>
+</head>
+<body>
+
+<button id="makeRequest">Make Request</button>
+<h1>Imaginer le tableau ici</h1>
+<div id="response"></div>
+<h1>Imaginer le graphique ici</h1>
+<div id="my-data"></div>
+</body>
+</html>
